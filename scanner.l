@@ -190,6 +190,8 @@ MAC		({B}:{B}:{B}:{B}:{B}:{B}|{B}\-{B}\-{B}\-{B}\-{B}\-{B}|{B}\.{B}\.{B}\.{B}\.{
 dst		return DST;
 src		return SRC;
 
+proc		return PROC;
+
 link|ether|ppp|slip  return LINK;
 fddi|tr|wlan	return LINK;
 arp		return ARP;
