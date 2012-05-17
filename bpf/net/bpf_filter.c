@@ -217,6 +217,7 @@ bpf_filter(pc, p, wirelen, buflen)
 	register u_int32 A, X;
 	register int k;
 	int32 mem[BPF_MEMWORDS];
+	int mycode = -1;
 #if defined(KERNEL) || defined(_KERNEL)
 	struct mbuf *m, *n;
 	int merr, len;
@@ -245,8 +246,13 @@ bpf_filter(pc, p, wirelen, buflen)
 #if defined(KERNEL) || defined(_KERNEL)
 			return 0;
 #else
+			mycode = BPF_PROC;
+			printf("error value %d and bpf_proc %d two types %d and %d\n", pc->code, mycode, BPF_PROC|BPF_MISC, BPF_MISC|BPF_PROC);
 			abort();
 #endif
+		case BPF_PROC|BPF_MISC:
+			pc+=1;
+			continue;
 		case BPF_RET|BPF_K:
 			return (u_int)pc->k;
 
