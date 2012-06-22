@@ -247,10 +247,12 @@ bpf_filter(pc, p, wirelen, buflen)
 			return 0;
 #else
 			mycode = BPF_PROC;
-			printf("error value %d and bpf_proc %d two types %d and %d\n", pc->code, mycode, BPF_PROC|BPF_MISC, BPF_MISC|BPF_PROC);
+			//printf("error value %d and bpf_proc %d two types %d and %d\n", pc->code, mycode, BPF_PROC|BPF_MISC, BPF_MISC|BPF_PROC);
 			abort();
 #endif
 		case BPF_PROC|BPF_MISC:
+			mycode = BPF_PROC;
+			//printf("error value %d and bpf_proc %d two types %d and %d\n", pc->code, mycode, BPF_PROC|BPF_MISC, BPF_MISC|BPF_PROC);
 			pc+=1;
 			continue;
 		case BPF_RET|BPF_K:
