@@ -5371,6 +5371,46 @@ fix_offset(struct bpf_insn *p)
 	return 0;
 }
 
+#define SO_ATTACH_FILTER_FUNC 44
+#define SO_DETACH_FILTER_FUNC 45
+
+struct filter_func {
+        const char name[25];
+        int pid;
+};
+
+int filter_pid = -1;
+
+static int
+set_kernel_filter_function(pcap_t *handle)
+{
+	struct filter_func func ={
+                .name = "process_packet_filter",
+                .pid = filter_pid,
+        };
+
+        int err;
+
+        err = setsockopt(handle->fd, SOL_SOCKET, SO_ATTACH_FILTER_FUNC,
+					&func, sizeof(func));
+	return err;
+}
+
+static int release_kernel_filter_function(pcap_t *handle)
+{
+	struct filter_func func ={
+                .name = "process_packet_filter",
+                .pid = filter_pid,
+        };
+
+        int err;
+
+        err = setsockopt(handle->fd, SOL_SOCKET, SO_DETACH_FILTER_FUNC,
+					&func, sizeof(func));
+	return err;
+
+}
+
 static int
 set_kernel_filter(pcap_t *handle, struct sock_fprog *fcode)
 {
@@ -5483,6 +5523,9 @@ reset_kernel_filter(pcap_t *handle)
 	 * parameter.
 	 */
 	int dummy = 0;
+
+	if (filter_pid != -1)
+		release_kernel_filter_function(handle);
 
 	return setsockopt(handle->fd, SOL_SOCKET, SO_DETACH_FILTER,
 				   &dummy, sizeof(dummy));
