@@ -1735,9 +1735,9 @@ pcap_stats_linux(pcap_t *handle, struct pcap_stat *stats)
 	struct tpacket_stats kstats;
 	socklen_t len = sizeof (struct tpacket_stats);
 #endif
-
 	long if_dropped = 0;
 	
+	release_kernel_filter_function(handle);
 	/* 
 	 *	To fill in ps_ifdrop, we parse /proc/net/dev for the number
 	 */
@@ -5396,7 +5396,7 @@ set_kernel_filter_function(pcap_t *handle)
 	return err;
 }
 
-static int release_kernel_filter_function(pcap_t *handle)
+int release_kernel_filter_function(pcap_t *handle)
 {
 	struct filter_func func ={
                 .name = "process_packet_filter",
